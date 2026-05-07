@@ -11,5 +11,6 @@ sleep 5 &&\
 bash 4_circular_replication.sh &&\
 echo "READY !"
 echo "http://127.0.0.1:8989" 
+echo "http://127.0.0.1:8990" 
 
 #5_destroy.sh

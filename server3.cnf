@@ -1,0 +1,13 @@
+[mariadb]
+# Identifiant unique du serveur (obligatoire)
+server_id = 3
+gtid-domain-id   = 1
+
+# Activation du journal binaire (nécessaire pour la réplication)
+log_bin = mysql-bin
+
+# S'assurer que le serveur écoute sur l'IP de votre réseau (et non juste localhost)
+bind-address = 0.0.0.0
+log_slave_updates
+auto_increment_offset = 1
+auto_increment_increment = 2

@@ -133,4 +133,5 @@ echo "Fichier généré ! Démarrage du conteneur Docker..."
 echo "${token}" | docker login docker.mariadb.com -u ${mail} --password-stdin
 docker pull docker.mariadb.com/maxscale:latest
 docker run -d -p 4000:4000 -p 4001:4001 -p 8989:8989 --name maxscale1 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
+docker run -d -p 4002:4000 -p 4003:4001 -p 8990:8989 --name maxscale2 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
 

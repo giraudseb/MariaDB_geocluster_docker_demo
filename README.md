@@ -17,4 +17,9 @@ Start with ./demo.sh
 
 Destroy the whole deployment with ./5_destroy.sh
 
-#TODO add disk cleanup 
+#TODO add disk cleanup
+#TODO add Exa 
+#TODO add the operator full demo
+#TODO add Kubernetes Operator
+#TODO add docker compose deployment base 
+ 

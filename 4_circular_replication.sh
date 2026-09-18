@@ -31,3 +31,7 @@ docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTE
 docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ipmax',MASTER_USER='seb',MASTER_PASSWORD='$password',MASTER_PORT=4001,MASTER_LOG_FILE='$binfile2',MASTER_SSL=0;"|| exit 9;  
 docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
 docker exec -it mariadb1 mariadb -uroot -p${password} -e "start slave;"|| exit 9;
+
+
+# Create test databases
+docker exec -it mariadb1 mariadb -uroot -p${password} -e "CREATE DATABASE 'trading';"|| exit 9; 

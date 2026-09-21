@@ -15,22 +15,22 @@ ip3=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAdd
 ip4=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb4)
 ip5=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb5)
 ip6=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb6)
-ipmax=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' maxscale1)
+ipmax=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' maxscale_primary)
 
 user="seb"
 
-echo Circular replication
-docker exec -it mariadb4 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
-docker exec -it mariadb4 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
-docker exec -it mariadb4 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ipmax',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=4000,MASTER_LOG_FILE='$binfile',MASTER_SSL=0;"|| exit 9;  
-docker exec -it mariadb4 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
-docker exec -it mariadb4 mariadb -uroot -p${password} -e "start slave;"|| exit 9;
+#echo Circular replication
+#docker exec -it mariadb1 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
+#docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
+#docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ipmax',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=4000,MASTER_LOG_FILE='$binfile',MASTER_SSL=0;"|| exit 9;  
+#docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
+#docker exec -it mariadb1 mariadb -uroot -p${password} -e "start slave;"|| exit 9;
 
-docker exec -it mariadb1 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
-docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
-docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ipmax',MASTER_USER='seb',MASTER_PASSWORD='$password',MASTER_PORT=4001,MASTER_LOG_FILE='$binfile2',MASTER_SSL=0;"|| exit 9;  
-docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
-docker exec -it mariadb1 mariadb -uroot -p${password} -e "start slave;"|| exit 9;
+#docker exec -it mariadb1 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
+#docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
+#docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ipmax',MASTER_USER='seb',MASTER_PASSWORD='$password',MASTER_PORT=4001,MASTER_LOG_FILE='$binfile2',MASTER_SSL=0;"|| exit 9;  
+#docker exec -it mariadb1 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
+#docker exec -it mariadb1 mariadb -uroot -p${password} -e "start slave;"|| exit 9;
 
 
 # Create test databases

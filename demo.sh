@@ -6,7 +6,8 @@ bash 1_Enterprise_create_replication_docker_env.sh &&\
 sleep 10 &&\
 
 bash 2_Enterprise_set_replication_docker_env.sh &&\
-bash 3_maxscale.sh &&\
+bash 3b_maxscale_pri.sh &&\
+bash 3b_maxscale_sec.sh &&\
 sleep 5 &&\
 bash 4_circular_replication.sh &&\
 echo "READY !"

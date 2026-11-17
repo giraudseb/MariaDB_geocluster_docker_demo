@@ -25,6 +25,7 @@ admin_host=0.0.0.0
 admin_port=8989
 admin_gui=true
 admin_secure_gui=false
+license_key=$license_key
 
 [server1]
 type=server
@@ -131,7 +132,7 @@ EOF
 echo "Fichier généré ! Démarrage du conteneur Docker..."
 ## Authenticate, pull, and run in one sequence
 echo "${token}" | docker login docker.mariadb.com -u ${mail} --password-stdin
-docker pull docker.mariadb.com/maxscale:25.10
-docker run -d -p 4000:4000 -p 4001:4001 -p 8989:8989 --name maxscale1 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:25.10
-docker run -d -p 4002:4000 -p 4003:4001 -p 8990:8989 --name maxscale2 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:25.10
+docker pull docker.mariadb.com/maxscale:latest
+docker run -d -p 4000:4000 -p 4001:4001 -p 8989:8989 --name maxscale1 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
+docker run -d -p 4002:4000 -p 4003:4001 -p 8990:8989 --name maxscale2 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
 

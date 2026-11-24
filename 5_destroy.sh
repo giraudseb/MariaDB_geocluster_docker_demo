@@ -4,5 +4,5 @@
 #
 . .secret
 
-docker container stop mariadb1 mariadb2 mariadb3 mariadb4 mariadb5 mariadb6 maxscale1 maxscale2 
-docker container rm mariadb1 mariadb2 mariadb3 mariadb4 mariadb5 mariadb6 maxscale1 maxscale2
+docker container stop mariadb1 mariadb2 mariadb3 mariadb4 mariadb5 mariadb6 mariadb7 mariadb8 maxscale1 maxscale2 
+docker container rm mariadb1 mariadb2 mariadb3 mariadb4 mariadb5 mariadb6 mariadb7 mariadb8 maxscale1 maxscale2

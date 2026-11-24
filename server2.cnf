@@ -10,4 +10,10 @@ log_bin = mysql-bin
 bind-address = 0.0.0.0
 log_slave_updates
 auto_increment_offset = 1
-auto_increment_increment = 2
+auto_increment_increment = 4
+
+# Filtres par connexion (persistants)
+db1.replicate_do_db=DB3,DB4,CLIENTS
+db2.replicate_do_db=DB3,DB4,CLIENTS
+db3.replicate_do_db=DB3,CLIENTS
+db4.replicate_do_db=DB4,CLIENTS

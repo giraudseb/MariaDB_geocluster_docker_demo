@@ -14,6 +14,8 @@ IP_NODE_3=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v
 IP_NODE_4=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb4)
 IP_NODE_5=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb5)
 IP_NODE_6=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb6)
+IP_NODE_7=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb7)
+IP_NODE_8=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb8)
 
 echo "Génération du fichier maxscale.cnf avec les IPs : $IP_NODE_1, $IP_NODE_2, $IP_NODE_3..."
 
@@ -127,12 +129,89 @@ type=listener
 service=DC2-RWS
 protocol=MariaDBClient
 port=4001
+
+[server7]
+type=server
+address=$IP_NODE_7
+port=3306
+protocol=MariaDBBackend
+
+[DC3-monitor]
+type=monitor
+module=mariadbmon
+servers=server7
+user=${user}
+password=${password}
+monitor_interval=200ms
+auto_failover=true
+auto_rejoin=true
+backend_connect_timeout=1s
+backend_read_timeout=1s
+
+[DC3-RWS]
+type=service
+router=readwritesplit
+servers=server7
+user=${user}
+password=${password}
+transaction_replay                   = true
+transaction_replay_max_size          = 100Mi
+transaction_replay_attempts          = 100
+transaction_replay_retry_on_deadlock = true
+enable_root_user		     = true
+master_reconnection		     = true     
+master_failure_mode		     = fail_on_write 
+
+[DC3-port]
+type=listener
+service=DC3-RWS
+protocol=MariaDBClient
+port=4010
+
+[server8]
+type=server
+address=$IP_NODE_8
+port=3306
+protocol=MariaDBBackend
+
+[DC4-monitor]
+type=monitor
+module=mariadbmon
+servers=server8
+user=${user}
+password=${password}
+monitor_interval=200ms
+auto_failover=true
+auto_rejoin=true
+backend_connect_timeout=1s
+backend_read_timeout=1s
+
+[DC4-RWS]
+type=service
+router=readwritesplit
+servers=server8
+user=${user}
+password=${password}
+transaction_replay                   = true
+transaction_replay_max_size          = 100Mi
+transaction_replay_attempts          = 100
+transaction_replay_retry_on_deadlock = true
+enable_root_user		     = true
+master_reconnection		     = true     
+master_failure_mode		     = fail_on_write 
+
+[DC4-port]
+type=listener
+service=DC4-RWS
+protocol=MariaDBClient
+port=4011
+
 EOF
 
 echo "Fichier généré ! Démarrage du conteneur Docker..."
 ## Authenticate, pull, and run in one sequence
 echo "${token}" | docker login docker.mariadb.com -u ${mail} --password-stdin
 docker pull docker.mariadb.com/maxscale:latest
-docker run -d -p 4000:4000 -p 4001:4001 -p 8989:8989 --name maxscale1 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
-docker run -d -p 4002:4000 -p 4003:4001 -p 8990:8989 --name maxscale2 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
+docker run -d -p 4000:4000 -p 4001:4001 -p 4010:4010 -p 4011:4011 -p 8989:8989 --name maxscale1 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
+docker run -d -p 4002:4000 -p 4003:4001 -p 8990:8989 -p 4021:4010 -p 4022:4011 --name maxscale2 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
 

@@ -22,3 +22,5 @@ docker run --name mariadb3 -e MYSQL_ROOT_PASSWORD=${password} -p 3309:3306 -d -v
 docker run --name mariadb4 -e MYSQL_ROOT_PASSWORD=${password} -p 3310:3306 -d -v $(pwd)/server4.cnf:/etc/mysql/conf.d/seb.cnf docker.mariadb.com/enterprise-server:latest || exit 5; 
 docker run --name mariadb5 -e MYSQL_ROOT_PASSWORD=${password} -p 3311:3306 -d -v $(pwd)/server5.cnf:/etc/mysql/conf.d/seb.cnf docker.mariadb.com/enterprise-server:latest || exit 6; 
 docker run --name mariadb6 -e MYSQL_ROOT_PASSWORD=${password} -p 3312:3306 -d -v $(pwd)/server6.cnf:/etc/mysql/conf.d/seb.cnf docker.mariadb.com/enterprise-server:latest || exit 7; 
+docker run --name mariadb7 -e MYSQL_ROOT_PASSWORD=${password} -p 3313:3306 -d -v $(pwd)/server5.cnf:/etc/mysql/conf.d/seb.cnf docker.mariadb.com/enterprise-server:latest || exit 8; 
+docker run --name mariadb8 -e MYSQL_ROOT_PASSWORD=${password} -p 3314:3306 -d -v $(pwd)/server6.cnf:/etc/mysql/conf.d/seb.cnf docker.mariadb.com/enterprise-server:latest || exit 9; 

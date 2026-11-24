@@ -12,8 +12,10 @@ ip3=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAdd
 ip4=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb4)
 ip5=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb5)
 ip6=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb6)
+ip7=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb7)
+ip8=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$v.IPAddress}}{{end}}' mariadb8)
 
-for server in mariadb1 mariadb2 mariadb3 mariadb4 mariadb5 mariadb6
+for server in mariadb1 mariadb2 mariadb3 mariadb4 mariadb5 mariadb6 mariadb7 mariadb8
 do 
 	docker exec -i ${server} mariadb -u root -p$password -e "
 	CREATE USER IF NOT EXISTS 'maxscale_user'@'%' IDENTIFIED BY '${password}';
@@ -60,6 +62,7 @@ docker exec -it mariadb4 mariadb -uroot -p${password} -e "FLUSH PRIVILEGES;" || 
 echo "Pause during 10 sec"
 sleep 10 
 
+
 # Start replication 
 echo Node2
 docker exec -it mariadb2 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
@@ -80,10 +83,46 @@ docker exec -it mariadb5 mariadb -uroot -p${password} -e "stop slave;"|| exit 9;
 docker exec -it mariadb5 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ip4',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile2';"|| exit 9; 
 docker exec -it mariadb5 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
 docker exec -it mariadb5 mariadb -uroot -p${password} -e "start slave;"|| exit 9; 
-# on Node6 now
+## on Node6 now
 echo Node6
 docker exec -it mariadb6 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
 docker exec -it mariadb6 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ip4',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile2';"|| exit 9; 
 docker exec -it mariadb6 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
 docker exec -it mariadb6 mariadb -uroot -p${password} -e "start slave;"|| exit 9;
 
+# Create a first querie 
+docker exec -it mariadb7 mariadb -uroot -p${password} -e "CREATE DATABASE SEB;" || exit 8;
+docker exec -it mariadb7 mariadb -uroot -p${password} -e "CREATE TABLE SEB.test(id int,description varchar(256));" || exit 8;
+docker exec -it mariadb7 mariadb -uroot -p${password} -e "INSERT INTO SEB.test(id, description) VALUES (1,'test by seb');" || exit 8;
+
+# Add grants for MariaDB Monitor application  
+docker exec -it mariadb7 mariadb -uroot -p${password} -e "GRANT ALL PRIVILEGES ON *.* TO 'seb'@'127.0.0.1' IDENTIFIED BY '${password}';" || exit 8;
+docker exec -it mariadb7 mariadb -uroot -p${password} -e "GRANT ALL PRIVILEGES ON *.* TO 'seb'@'%' IDENTIFIED BY '${password}';" || exit 8;
+docker exec -it mariadb7 mariadb -uroot -p${password} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '${password}';" || exit 8;
+docker exec -it mariadb7 mariadb -uroot -p${password} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '${password}';" || exit 8;
+docker exec -it mariadb7 mariadb -uroot -p${password} -e "FLUSH PRIVILEGES;" || exit 8;
+
+# Create a first querie 
+docker exec -it mariadb8 mariadb -uroot -p${password} -e "CREATE DATABASE SEB;" || exit 8;
+docker exec -it mariadb8 mariadb -uroot -p${password} -e "CREATE TABLE SEB.test(id int,description varchar(256));" || exit 8;
+docker exec -it mariadb8 mariadb -uroot -p${password} -e "INSERT INTO SEB.test(id, description) VALUES (1,'test by seb');" || exit 8;
+
+# Add grants for MariaDB Monitor application  
+docker exec -it mariadb8 mariadb -uroot -p${password} -e "GRANT ALL PRIVILEGES ON *.* TO 'seb'@'127.0.0.1' IDENTIFIED BY '${password}';" || exit 8;
+docker exec -it mariadb8 mariadb -uroot -p${password} -e "GRANT ALL PRIVILEGES ON *.* TO 'seb'@'%' IDENTIFIED BY '${password}';" || exit 8;
+docker exec -it mariadb8 mariadb -uroot -p${password} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '${password}';" || exit 8;
+docker exec -it mariadb8 mariadb -uroot -p${password} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '${password}';" || exit 8;
+docker exec -it mariadb8 mariadb -uroot -p${password} -e "FLUSH PRIVILEGES;" || exit 8;
+
+## Start replication 
+#echo Node7
+#docker exec -it mariadb7 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
+#docker exec -it mariadb7 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ip1',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile';"|| exit 9; 
+#docker exec -it mariadb7 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
+#docker exec -it mariadb7 mariadb -uroot -p${password} -e "start slave;"|| exit 9; 
+## on Node6 now
+#echo Node8
+#docker exec -it mariadb8 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
+#docker exec -it mariadb8 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ip4',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile2';"|| exit 9; 
+#docker exec -it mariadb8 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
+#docker exec -it mariadb8 mariadb -uroot -p${password} -e "start slave;"|| exit 9;

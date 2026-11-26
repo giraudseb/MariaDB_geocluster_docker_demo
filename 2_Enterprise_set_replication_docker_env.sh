@@ -66,29 +66,29 @@ sleep 10
 # Start replication 
 echo Node2
 docker exec -it mariadb2 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
-docker exec -it mariadb2 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ip1',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile';"|| exit 9; 
-docker exec -it mariadb2 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
-docker exec -it mariadb2 mariadb -uroot -p${password} -e "start slave;"|| exit 9; 
+docker exec -it mariadb2 mariadb -uroot -p${password} -e "CHANGE MASTER 'DB1' TO MASTER_HOST='$ip1',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile';"|| exit 9; 
+docker exec -it mariadb2 mariadb -uroot -p${password} -e "CHANGE MASTER 'DB1' TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
+docker exec -it mariadb2 mariadb -uroot -p${password} -e "start slave 'DB1';"|| exit 9; 
 # on Node3 now
 echo Node3
 docker exec -it mariadb3 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
-docker exec -it mariadb3 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ip1',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile';"|| exit 9; 
-docker exec -it mariadb3 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
-docker exec -it mariadb3 mariadb -uroot -p${password} -e "start slave;"|| exit 9; 
+docker exec -it mariadb3 mariadb -uroot -p${password} -e "CHANGE MASTER 'DB1' TO MASTER_HOST='$ip1',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile';"|| exit 9; 
+docker exec -it mariadb3 mariadb -uroot -p${password} -e "CHANGE MASTER 'DB1' TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
+docker exec -it mariadb3 mariadb -uroot -p${password} -e "start slave 'DB1';"|| exit 9; 
 
 
 # Start replication 
 echo Node5
 docker exec -it mariadb5 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
-docker exec -it mariadb5 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ip4',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile2';"|| exit 9; 
-docker exec -it mariadb5 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
-docker exec -it mariadb5 mariadb -uroot -p${password} -e "start slave;"|| exit 9; 
+docker exec -it mariadb5 mariadb -uroot -p${password} -e "CHANGE MASTER 'DB2' TO MASTER_HOST='$ip4',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile2';"|| exit 9; 
+docker exec -it mariadb5 mariadb -uroot -p${password} -e "CHANGE MASTER 'DB2' TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
+docker exec -it mariadb5 mariadb -uroot -p${password} -e "start slave 'DB2';"|| exit 9; 
 ## on Node6 now
 echo Node6
 docker exec -it mariadb6 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
-docker exec -it mariadb6 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ip4',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile2';"|| exit 9; 
-docker exec -it mariadb6 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
-docker exec -it mariadb6 mariadb -uroot -p${password} -e "start slave;"|| exit 9;
+docker exec -it mariadb6 mariadb -uroot -p${password} -e "CHANGE MASTER 'DB2' TO MASTER_HOST='$ip4',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile2';"|| exit 9; 
+docker exec -it mariadb6 mariadb -uroot -p${password} -e "CHANGE MASTER 'DB2' TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
+docker exec -it mariadb6 mariadb -uroot -p${password} -e "start slave 'DB2';"|| exit 9;
 
 # Create a first querie 
 docker exec -it mariadb7 mariadb -uroot -p${password} -e "CREATE DATABASE SEB;" || exit 8;
@@ -114,15 +114,3 @@ docker exec -it mariadb8 mariadb -uroot -p${password} -e "GRANT ALL PRIVILEGES O
 docker exec -it mariadb8 mariadb -uroot -p${password} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '${password}';" || exit 8;
 docker exec -it mariadb8 mariadb -uroot -p${password} -e "FLUSH PRIVILEGES;" || exit 8;
 
-## Start replication 
-#echo Node7
-#docker exec -it mariadb7 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
-#docker exec -it mariadb7 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ip1',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile';"|| exit 9; 
-#docker exec -it mariadb7 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
-#docker exec -it mariadb7 mariadb -uroot -p${password} -e "start slave;"|| exit 9; 
-## on Node6 now
-#echo Node8
-#docker exec -it mariadb8 mariadb -uroot -p${password} -e "stop slave;"|| exit 9; 
-#docker exec -it mariadb8 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_HOST='$ip4',MASTER_USER='$user',MASTER_PASSWORD='$password',MASTER_PORT=3306,MASTER_LOG_FILE='$binfile2';"|| exit 9; 
-#docker exec -it mariadb8 mariadb -uroot -p${password} -e "CHANGE MASTER TO MASTER_USE_GTID =  slave_pos;"|| exit 9; 
-#docker exec -it mariadb8 mariadb -uroot -p${password} -e "start slave;"|| exit 9;

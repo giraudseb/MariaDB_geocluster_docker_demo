@@ -28,6 +28,7 @@ admin_port=8989
 admin_gui=true
 admin_secure_gui=false
 license_key=$license_key
+skip_name_resolve=true
 
 [server1]
 type=server
@@ -56,9 +57,9 @@ password=${password}
 monitor_interval=200ms
 auto_failover=true
 auto_rejoin=true
+cooperative_monitoring_locks=majority_of_running
 backend_connect_timeout=1s
 backend_read_timeout=1s
-
 
 [DC1-RWS]
 type=service
@@ -79,6 +80,21 @@ type=listener
 service=DC1-RWS
 protocol=MariaDBClient
 port=4000
+
+[DC1-repl]
+type=service
+router=readconnroute
+router_options=master
+servers=server1,server2,server3
+user=${user}
+password=${password}
+enable_root_user=true
+
+[DC1-repl-port]
+type=listener
+service=DC1-repl
+protocol=MariaDBClient
+port=4100
 
 [server4]
 type=server
@@ -107,6 +123,7 @@ password=${password}
 monitor_interval=200ms
 auto_failover=true
 auto_rejoin=true
+cooperative_monitoring_locks=majority_of_running
 backend_connect_timeout=1s
 backend_read_timeout=1s
 
@@ -129,6 +146,21 @@ type=listener
 service=DC2-RWS
 protocol=MariaDBClient
 port=4001
+
+[DC2-repl]
+type=service
+router=readconnroute
+router_options=master
+servers=server4,server5,server6
+user=${user}
+password=${password}
+enable_root_user=true
+
+[DC2-repl-port]
+type=listener
+service=DC2-repl
+protocol=MariaDBClient
+port=4200
 
 [server7]
 type=server
@@ -212,6 +244,11 @@ echo "Fichier généré ! Démarrage du conteneur Docker..."
 ## Authenticate, pull, and run in one sequence
 echo "${token}" | docker login docker.mariadb.com -u ${mail} --password-stdin
 docker pull docker.mariadb.com/maxscale:latest
-docker run -d -p 4000:4000 -p 4001:4001 -p 4010:4010 -p 4011:4011 -p 8989:8989 --name maxscale1 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
-docker run -d -p 4002:4000 -p 4003:4001 -p 8990:8989 -p 4021:4010 -p 4022:4011 --name maxscale2 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
-
+docker run -d -p 4000:4000 -p 4001:4001 -p 4010:4010 -p 4011:4011 -p 8989:8989 -p 4100:4100 --name maxscale1 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
+docker run -d -p 4002:4000 -p 4003:4001 -p 8990:8989 -p 4021:4010 -p 4022:4011 -p 4200:4200 --name maxscale2 -v $(pwd)/maxscale.cnf:/etc/maxscale.cnf docker.mariadb.com/maxscale:latest
+echo "#####################################################################################"
+echo "# LISTENNING PORTS :                                                                #"
+echo "# ------------------                                                                #"
+echo "# maxscale1: 4000:DC1, 4001:DC2, 4010:DC3, 4011:DC4, 4100:DC1_repl, 8989:MaxGUI     #"
+echo "# maxscale2: 4002:DC1, 4003:DC2, 4021:DC3, 4022:DC4, 4200:DC2_repl, 8990:MaxGUI     #"
+echo "#####################################################################################"

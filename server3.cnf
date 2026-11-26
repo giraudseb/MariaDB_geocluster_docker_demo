@@ -2,6 +2,7 @@
 # Identifiant unique du serveur (obligatoire)
 server_id = 3
 gtid-domain-id   = 1
+binlog_format = ROW
 
 # Activation du journal binaire (nécessaire pour la réplication)
 log_bin = mysql-bin
@@ -13,7 +14,7 @@ auto_increment_offset = 1
 auto_increment_increment = 4
 
 # Filtres par connexion (persistants)
-db1.replicate_do_db=DB3,DB4,CLIENTS
-db2.replicate_do_db=DB3,DB4,CLIENTS
-db3.replicate_do_db=DB3,CLIENTS
-db4.replicate_do_db=DB4,CLIENTS
+db3.replicate_do_db=DB3
+db3.replicate_do_db=CLIENTS
+db4.replicate_do_db=DB4
+db4.replicate_do_db=CLIENTS
